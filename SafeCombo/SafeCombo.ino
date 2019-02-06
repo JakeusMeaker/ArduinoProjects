@@ -5,7 +5,8 @@ int lockLed = 11;
 int potIn = A0;
 int potVal = 0;
 int ledsLit = 0;
-int combination[6] = {79, 32, 54};
+int button = 2;
+int combination[6] = {random(99), random(99), random(99)};
 
 bool checking = false;
 bool locked = true;
@@ -13,13 +14,13 @@ bool locked = true;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-
+  randomSeed(analogRead(A1));
   pinMode(redLed, OUTPUT);
   pinMode(yellowLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
   pinMode(lockLed, OUTPUT);
   pinMode(potIn, INPUT);
-  
+  pinMode(button, INPUT);
 }
 
 void loop() {
@@ -76,6 +77,10 @@ void loop() {
     else{
       digitalWrite(lockLed, LOW);
     }
+
+    if(digitalRead(button) == HIGH){
+      Reset();
+    }
     
 }
 
@@ -100,4 +105,13 @@ void Flash(int pin){
   digitalWrite(pin, LOW);
 }
 
+void Reset(){
+  randomSeed(analogRead(A1));
+  combination[6] = new int[6] {random(99), random(99), random(99)};
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, LOW);
+  ledsLit = 0;
+  locked = true;
+}
 
