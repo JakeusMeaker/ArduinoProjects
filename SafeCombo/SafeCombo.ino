@@ -7,8 +7,16 @@ int potVal = 0;
 int ledsLit = 0;
 int button = 2;
 int vib = 13;
+int lastIncrement = 0;
 //int combination[6] = {random(99), random(99), random(99)};
-int combination[6] = {84, 10, 64};
+int combination[6]        = {1, 3, 5};
+int combinationLedPins[3] = {redLed, yellowLed, greenLed};
+
+// if (potIn == combination[ledLit]) {
+//      CheckPin(combinationLedPins[ledLit]);
+// }
+//
+
 
 bool checking = false;
 bool locked = true;
@@ -16,7 +24,7 @@ bool locked = true;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  randomSeed(analogRead(0));
+  randomSeed(analogRead(A0));
 //  Serial.println(randomSeed);
 //  Serial.println('\0');
   pinMode(redLed, OUTPUT);
@@ -26,13 +34,21 @@ void setup() {
   pinMode(potIn, INPUT);
   pinMode(button, INPUT);
   pinMode(vib, OUTPUT);
+  lastIncrement = analogRead(potIn) / 10;
 }
 
 void loop() {
+
+  Serial.println(ledsLit);
   // put your main code here, to run repeatedly:
   potVal = analogRead(potIn) / 10;
-  Serial.println(potVal);
+//  Serial.println(potVal);
   Serial.println('\0');
+
+  if(potVal != lastIncrement){
+    lastIncrement = potVal;
+    Flash(13, 10);
+  }
   
   if (locked){
     digitalWrite(lockLed, HIGH);
@@ -42,7 +58,7 @@ void loop() {
       case 0: 
        if (potVal == combination[0]){
         if(!checking){
-          CheckPin(redLed);     
+          CheckPin(redLed);   
           }
           
          break;
@@ -91,7 +107,7 @@ void loop() {
 
 void CheckPin(int pin){
   checking = true;
-  Flash(pin);
+  Flash(pin, 100);
   delay(950);
   
   potVal = analogRead(potIn) / 10;
@@ -106,16 +122,16 @@ void CheckPin(int pin){
   checking = false;
 }
 
-void Flash(int pin){
+void Flash(int pin, int dur){
 //  digitalWrite(pin, HIGH);
 
-//  delay(50);
+//  delay(dur);
   
 //  digitalWrite(pin, LOW);
 
   digitalWrite(vib, HIGH);
 
-  delay(50);
+  delay(dur);
 
   digitalWrite(vib, LOW);
 }
